@@ -7,14 +7,14 @@ namespace mahric_operation_polonaise
     {
         private static void Main(string[] args)
         {
-            List<string> list_operation;
-            if (! ((list_operation = Saisie())== null))
+            String[] tableau_operation;
+            if (!((tableau_operation = Saisie()) == null))
             {
-                Affichage(Resolution(list_operation));
+                Affichage(Resolution(tableau_operation));
             }
-            
-           
-           
+
+
+
 
         }
 
@@ -27,19 +27,19 @@ namespace mahric_operation_polonaise
         /// Renvoie la liste des opérateur et opérande 
         /// ou null si l'utilisateur annule la saisie
         /// </returns>
-        private static List<String> Saisie()
+        private static String[] Saisie()
         {
             String saisie;
-            List<String> list;
+            String[] tableau_operation;
 
 
             Console.WriteLine("Entrée votre équation en séparant les membre par un espace");
-           
-            
-            saisie= Console.ReadLine();
 
-            list = String_to_List(saisie, ' ');
-            if ( list == null || list.Count<3 )
+
+            saisie = Console.ReadLine();
+
+            tableau_operation = String_to_List(saisie, ' ');
+            if (tableau_operation == null || tableau_operation.Length < 3)
             {
                 Console.WriteLine("Saisie incorrecte. A pour relancer et une autre pour terminer");
                 saisie = Console.ReadLine();
@@ -50,13 +50,11 @@ namespace mahric_operation_polonaise
                 }
                 else
                 {
-
-                    
                     return null;
                 }
             }
-            
-            return list; 
+     
+            return tableau_operation;
         }
 
 
@@ -70,31 +68,53 @@ namespace mahric_operation_polonaise
         /// renvoi la liste des opérateur et opérande  
         /// ou Null s'il y a une opération unaire
         /// </returns>
-        public static List<String> String_to_List(string entree, char separator)
+        public static String[] String_to_List(string entree, char separator)
         {
-            List<string> list_operation = new List<string>();
-            String block;
+            if (entree == null)
+            {
+                throw new Exception("Opération vide");
+            }
+            String[] tableau_operation = new String[entree.Length];
+            String block = "";
+            int index_tableau = 0;
             int startIndex = 0;
+            
             for (int i = 0; i < entree.Length; i++)
             {
                 if (entree[i] == separator)
                 {
-                    block=entree.Substring(startIndex, i - startIndex);
+                    block = recup_block(entree, startIndex, i );
                     if (Not_Unaire(block))
                     {
-                        list_operation.Add(block);
+                        tableau_operation[index_tableau] = block;
+                        index_tableau++;
                     }
                     else
-                    {
                         return null;
-                    }
-
-
                     startIndex = i + 1;
                 }
             }
-            list_operation.Add(entree.Substring(startIndex));
-            return list_operation;
+            tableau_operation[index_tableau] = recup_block(entree, startIndex, entree.Length);
+
+            return copy_tableau(tableau_operation, index_tableau + 1);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entree"></param>
+        /// <param name="index_start"></param>
+        /// <param name="index_fin"></param>
+        /// <returns></returns>
+        public static string recup_block(string entree, int index_start, int index_fin)
+        {
+            string block = "";
+            for (int i = index_start; i < index_fin; i++)
+            {
+                block += entree[i];
+                
+            }
+            return block;
         }
 
         /// <summary>
@@ -104,7 +124,7 @@ namespace mahric_operation_polonaise
         /// <returns> renvoie True s'il n'y a pas d'opération unaire
         /// False sinon 
         /// </returns>
-        private static bool Not_Unaire(string block)
+        public static bool Not_Unaire(string block)
         {
             if (block.Length == 1 && Is_Operatore(block[0]))
             {
@@ -114,7 +134,7 @@ namespace mahric_operation_polonaise
             {
                 for (int i = 0; i < block.Length; i++)
                 {
-                    
+
                     if (Is_Operatore(block[i]))
                     {
                         return false;
@@ -133,14 +153,7 @@ namespace mahric_operation_polonaise
         /// False sinon opérateur </returns>
         private static bool Is_Operatore(char carractere)
         {
-            if (carractere == '+' || carractere == '-' || carractere == '*' || carractere == '/')
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (carractere == '+' || carractere == '-' || carractere == '*' || carractere == '/');
         }
 
 
@@ -148,32 +161,31 @@ namespace mahric_operation_polonaise
         /// <summary>
         /// Fonction qui appelle plusieurs méthodes pour résoudre l'opération et renvoie le résultat
         /// </summary>
-        /// <param name="list_operation"> Liste des opérateur et opérande de l'opération</param>
+        /// <param name="tableau_operation"> Liste des opérateur et opérande de l'opération</param>
         /// <returns> résultat de l'opération</returns>
         /// <exception cref="Exception"> Erreur en cas d'opération non faisable </exception>
-        private static int Resolution(List<String> list_operation)
+        private static double Resolution(String[] tableau_operation)
         {
             int index_first_operator;
 
 
-            while (list_operation.Count > 1)
+            while (tableau_operation.Length > 1)
             {
-                index_first_operator = Find_Index_First_Operator(list_operation);
-                if (index_first_operator <2 || index_first_operator>=list_operation.Count)
+                index_first_operator = Find_Index_First_Operator(tableau_operation);
+                if (index_first_operator < 2 || index_first_operator >= tableau_operation.Length)
                 {
-                    throw new Exception("Expression non solvable"); 
+                    throw new Exception("Expression non solvable, operateur non trouver ou mal placer");
                 }
                 else
                 {
-                    
-                    if ((list_operation = Calcul(list_operation, index_first_operator)) == null)
+                    if ((tableau_operation = Calcul(tableau_operation, index_first_operator)) == null)
                     {
-                        throw new Exception("Expression non solvable");
-                        
+                        throw new Exception("Expression non solvable, calcul impossible");
+
                     }
                 }
             }
-            return int.Parse(list_operation[0]);
+            return double.Parse(tableau_operation[0]);
         }
 
         /// <summary>
@@ -185,7 +197,7 @@ namespace mahric_operation_polonaise
         /// renvoie l'opération modifiée si le calcul est faisable
         /// renvoie null si le calcul n'est pas faisable
         /// </returns>
-        private static List<String> Calcul(List<String> list_operation, int index_first_operator)
+        private static String[] Calcul(String[] list_operation, int index_first_operator)
         {
             double result = 0;
             try
@@ -202,6 +214,10 @@ namespace mahric_operation_polonaise
                         result = double.Parse(list_operation[index_first_operator - 2]) * double.Parse(list_operation[index_first_operator - 1]);
                         break;
                     case "/":
+                        if (double.Parse(list_operation[index_first_operator - 1])==0)
+                        {
+                            return null;
+                        }
                         result = double.Parse(list_operation[index_first_operator - 2]) / double.Parse(list_operation[index_first_operator - 1]);
                         break;
                     default:
@@ -210,27 +226,45 @@ namespace mahric_operation_polonaise
             }
             catch (Exception e)
             {
+                throw new Exception( "Expression non solvable, calcul impossibleee" +e.Message);
                 return null;
             }
-            list_operation[index_first_operator - 2] = result.ToString();
-            list_operation.RemoveAt(index_first_operator - 1);
-            list_operation.RemoveAt(index_first_operator - 1);
+            list_operation = decalage(list_operation, index_first_operator, result);
             return list_operation;
         }
 
 
+        private static String[] decalage(String[] tableau_operation, int index_first_operator, double result)
+        {
+            String[] copy_list_operation = copy_tableau(tableau_operation, tableau_operation.Length - 2);
+            copy_list_operation[index_first_operator - 2] = result.ToString();
+            for (int i = index_first_operator + 1; i < tableau_operation.Length; i++)
+            {
+                copy_list_operation[i - 2] = tableau_operation[i];
+            }
+            return copy_list_operation;
+        }
 
 
+        private static String[] copy_tableau(String[] tableau, int taille)
+        {
+            String[] copy_tableau = new String[taille];
+            for (int i = 0; i < taille; i++)
+            {
+                copy_tableau[i] = tableau[i];
+            }
+            return copy_tableau;
+        }
 
         /// <summary>
         /// Fonction qui renvoie l'index du premier opérateur de l'opération
         /// </summary>
         /// <param name="list_operation"> liste des opérandes et des opérateurs </param>
         /// <returns> index du premier opérateur </returns>
-        private static int Find_Index_First_Operator(List<String> list_operation)
+        private static int Find_Index_First_Operator(String[] list_operation)
         {
             int index = 0;
-            while ( list_operation.Count > index && list_operation[index] != "+" && list_operation[index] != "-" && list_operation[index] != "*" && list_operation[index] != "/" )
+            while ( list_operation.Length > index && list_operation[index] != "+" && list_operation[index] != "-" && list_operation[index] != "*" && list_operation[index] != "/" )
             {
                 index++;
                 
@@ -242,7 +276,7 @@ namespace mahric_operation_polonaise
         /// Fonction qui affiche le résultat de l'opération
         /// </summary>
         /// <param name="result"> résultat de l'opération</param>
-        private static void Affichage(int result)
+        private static void Affichage(double result)
         {
             
            
