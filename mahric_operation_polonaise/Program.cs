@@ -69,9 +69,9 @@ namespace mahric_operation_polonaise
         /// </returns>
         public static String[] String_to_List(string entree, char separator)
         {
-            if (entree == null)
+            if (entree == null || separator == null)
             {
-                throw new Exception("Opération vide");
+                throw new ArgumentNullException();
             }
             String[] tableau_operation = new String[entree.Length];
             String block = "";
@@ -125,6 +125,10 @@ namespace mahric_operation_polonaise
         /// </returns>
         public static bool Not_Unaire(string block)
         {
+            if(block == null)
+            {
+                throw new ArgumentNullException();
+            }
             if (block.Length == 1 && Is_Operatore(block[0]))
             {
                 return true;
@@ -173,13 +177,13 @@ namespace mahric_operation_polonaise
                 index_first_operator = Find_Index_First_Operator(tableau_operation);
                 if (index_first_operator < 2 || index_first_operator >= tableau_operation.Length)
                 {
-                    throw new Exception("Expression non solvable, operateur non trouver ou mal placer");
+                    throw new ArithmeticException("Expression non solvable, operateur non trouver ou mal placer");
                 }
                 else
                 {
                     if ((tableau_operation = Calcul(tableau_operation, index_first_operator)) == null)
                     {
-                        throw new Exception("Expression non solvable, calcul impossible");
+                        throw new ArithmeticException("Expression non solvable, calcul impossible");
 
                     }
                 }
