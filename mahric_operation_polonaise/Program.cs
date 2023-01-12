@@ -71,7 +71,7 @@ namespace mahric_operation_polonaise
         {
             if (entree == null || separator == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("entree ou separator null");
             }
             String[] tableau_operation = new String[entree.Length];
             String block = "";
@@ -127,7 +127,7 @@ namespace mahric_operation_polonaise
         {
             if(block == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("block null");
             }
             if (block.Length == 1 && Is_Operatore(block[0]))
             {
