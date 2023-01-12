@@ -99,18 +99,18 @@ namespace mahric_operation_polonaise
         }
 
         /// <summary>
-        /// 
+        /// fonction qui récupère les valeur entre deux index
         /// </summary>
-        /// <param name="entree"></param>
-        /// <param name="index_start"></param>
-        /// <param name="index_fin"></param>
-        /// <returns></returns>
+        /// <param name="entree"> valeur a récupérer</param>
+        /// <param name="index_start"> index de début</param>
+        /// <param name="index_fin"> index de fin</param>
+        /// <returns> chaine de caractère a stocker dans le tableau</returns>
         public static string recup_block(string entree, int index_start, int index_fin)
         {
             string block = "";
             for (int i = index_start; i < index_fin; i++)
             {
-                block += entree[i];
+                block =block+ entree[i];
                 
             }
             return block;
@@ -225,7 +225,6 @@ namespace mahric_operation_polonaise
             }
             catch (Exception e)
             {
-                throw new Exception( "Expression non solvable, calcul impossibleee" +e.Message);
                 return null;
             }
             list_operation = decalage(list_operation, index_first_operator, result);
@@ -233,6 +232,15 @@ namespace mahric_operation_polonaise
         }
 
 
+
+
+        /// <summary>
+        /// fonction qui permet de mettre le résultat du calcul dans le tableau et de suprimmé les opérateurs et opérandes en décalant le tableau a gauche.
+        /// </summary>
+        /// <param name="tableau_operation"> tableau des opérandes et opérateurs</param>
+        /// <param name="index_first_operator"> index du premier opérateur</param>
+        /// <param name="result"> valeur du résultat du calcul</param>
+        /// <returns> tableau modifié pour contenir le résultat et suprimer les opérandes et l'opérateur du calcul</returns>
         private static String[] decalage(String[] tableau_operation, int index_first_operator, double result)
         {
             String[] copy_list_operation = copy_tableau(tableau_operation, tableau_operation.Length - 2);
@@ -245,6 +253,14 @@ namespace mahric_operation_polonaise
         }
 
 
+        
+
+        /// <summary>
+        /// fonction qui permet de recopier un tableau dans un autre tableau de taille différente
+        /// </summary>
+        /// <param name="tableau"> tableau a copié </param>
+        /// <param name="taille"> taille du nouveau tableau</param>
+        /// <returns> tableau de la nouvelle taille contenant les valeur de l'ancien tableau</returns>
         private static String[] copy_tableau(String[] tableau, int taille)
         {
             String[] copy_tableau = new String[taille];
@@ -254,6 +270,9 @@ namespace mahric_operation_polonaise
             }
             return copy_tableau;
         }
+
+
+        
 
         /// <summary>
         /// Fonction qui renvoie l'index du premier opérateur de l'opération
@@ -270,6 +289,11 @@ namespace mahric_operation_polonaise
             }
             return index;
         }
+
+
+
+
+        
 
         /// <summary>
         /// Fonction qui affiche le résultat de l'opération
